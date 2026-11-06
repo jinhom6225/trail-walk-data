@@ -1,0 +1,135 @@
+name: collect
+
+# Builds data/index.json and data/courses/*.json for the 둘레길 지도 app
+# (trail_walk_guide research.md §6) once a day at 04:00 KST. GitHub starts
+# scheduled runs late (often 2-4 hours); course data changes slowly, so that
+# is fine. Order: unit tests -> mask the key -> collect -> commit data/ and
+# state/ when they changed -> Telegram notice.
+#
+# A failed call or a run guard (more than 20% fewer courses, or more than 20%
+# invalid rows) exits non-zero before anything is written, so nothing is
+# committed and the app keeps the last copy. The service key lives only in
+# the Collect step's env. Never turn on shell tracing (xtrace) here.
+
+on:
+  schedule:
+    - cron: "0 19 * * *"  # 04:00 KST
+  workflow_dispatch:
+    inputs:
+      refresh_gpx:
+        description: "Download every GPX file again"
+        type: boolean
+        default: false
+      force_fail:
+        description: "Fail before collecting (checks the failure notice)"
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Forced failure
+        if: inputs.force_fail
+        run: |
+          echo "force_fail=true: failing on purpose to check the Telegram failure notice"
+          exit 1
+
+      - name: Check out
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests
+        run: python -m unittest discover -s collector/tests -t .
+
+      # The collector prints only key-free lines ("summary:", "warning:");
+      # the notice and commit message files never contain the key.
+      - name: Collect
+        id: collect
+        env:
+          DATA_GO_KR_SERVICE_KEY: ${{ secrets.DATA_GO_KR_SERVICE_KEY }}
+          REFRESH_GPX: ${{ inputs.refresh_gpx }}
+        run: |
+          set -euo pipefail
+          python -m collector.mask_key
+          args=(--commit-message-file "${RUNNER_TEMP}/commit_message.txt" --notice-file "${RUNNER_TEMP}/notice.txt")
+          if [ "${REFRESH_GPX:-false}" = "true" ]; then args+=(--refresh-gpx); fi
+          python -m collector.collect "${args[@]}"
+
+      # The token reaches git only in this step, as a per-command header
+      # (checkout does not persist credentials).
+      - name: Commit changes
+        id: commit
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          git add -A data state
+          if git diff --cached --quiet -- data state; then
+            echo "data: no changes"
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -F "${RUNNER_TEMP}/commit_message.txt"
+          auth="$(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 | tr -d '\n')"
+          echo "::add-mask::${auth}"
+          git_auth() {
+            git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}" "$@"
+          }
+          for attempt in 1 2 3; do
+            if git_auth pull --rebase origin "${GITHUB_REF_NAME}" \
+              && git_auth push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "changed=true" >> "${GITHUB_OUTPUT}"
+              exit 0
+            fi
+            echo "push attempt ${attempt} failed"
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 5))
+          done
+          exit 1
+
+      - name: Telegram notice
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STATUS: ${{ job.status }}
+          CHANGED: ${{ steps.commit.outputs.changed }}
+          TRIGGER: ${{ github.event_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          notice_file="${RUNNER_TEMP}/notice.txt"
+          body=""
+          if [ -f "${notice_file}" ]; then body="$(head -c 3000 "${notice_file}")"; fi
+          if [ "${STATUS}" = "success" ]; then
+            text="$(printf '%s\n커밋: %s · 실행: %s' "${body:-✅ trail-walk-data 수집}" "${CHANGED:-skipped}" "${TRIGGER}")"
+          else
+            text="$(printf '%s\n❌ trail-walk-data 수집 실패 (%s, %s)\n%s' "${body}" "${STATUS}" "${TRIGGER}" "${RUN_URL}")"
+          fi
+          echo "${text}"
+          if [ -z "${TELEGRAM_BOT_TOKEN}" ] || [ -z "${TELEGRAM_CHAT_ID}" ]; then
+            echo "::warning::TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set; Telegram notices are off"
+            exit 0
+          fi
+          curl --silent --show-error --fail --max-time 15 -o /dev/null \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=${text}" \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            || echo "::warning::Telegram send failed"
