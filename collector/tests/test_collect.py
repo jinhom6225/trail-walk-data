@@ -8,6 +8,8 @@ from collector.errors import CallFailed
 from collector.http_client import RawResponse
 from collector.tests.support import (
     SECOND_RUN_AT,
+    SECOND_RUN_UTC,
+    FIRST_RUN_UTC,
     FakeDurunubi,
     hand_bytes,
     real_bytes,
@@ -29,9 +31,9 @@ class FirstRunTest(unittest.TestCase):
             self.assertEqual(result.code, 0, result.text)
             index = read_json(repo / "data" / "index.json")
             self.assertEqual(list(index), ["schemaVersion", "generatedAt", "sources", "routes", "items"])
-            self.assertEqual((index["schemaVersion"], index["generatedAt"]), (1, "2026-11-07T04:10:00+09:00"))
+            self.assertEqual((index["schemaVersion"], index["generatedAt"]), (1, FIRST_RUN_UTC))
             self.assertEqual(index["sources"], [{"id": "dnb", "name": "한국관광공사 두루누비 정보 서비스",
-                                                 "count": 174, "fetchedAt": "2026-11-07T04:10:00+09:00"}])
+                                                 "count": 174, "fetchedAt": FIRST_RUN_UTC}])
             self.assertEqual(len(index["routes"]), 4)
             items = index["items"]
             self.assertEqual(len(items), 174)
@@ -116,7 +118,7 @@ class SecondRunTest(unittest.TestCase):
             self.assertEqual(changed, ["data/index.json"])
             self.assertEqual(set(after), set(before))
             self.assertEqual(result.transport.hosts().count("www.durunubi.kr"), 0)
-            self.assertEqual(read_json(repo / "data" / "index.json")["generatedAt"], SECOND_RUN_AT)
+            self.assertEqual(read_json(repo / "data" / "index.json")["generatedAt"], SECOND_RUN_UTC)
             self.assertEqual(result.commit_message.splitlines()[0], "chore(data): refresh course index (no course changes)")
 
     def test_modified_course_is_downloaded_again_and_line_change_reported(self):
@@ -137,7 +139,7 @@ class SecondRunTest(unittest.TestCase):
             self.assertIn("~1 line", result.commit_message)
             self.assertIn("line: 남파랑길 1코스 (dnb-T_CRS_MNG0000005116)", result.commit_message)
             doc = read_json(repo / "data" / "courses" / f"{item['id']}.json")
-            self.assertEqual(doc["generatedAt"], SECOND_RUN_AT)
+            self.assertEqual(doc["generatedAt"], SECOND_RUN_UTC)
 
     def _hash_of(self, name):
         from collector import geometry
@@ -199,7 +201,7 @@ class SecondRunTest(unittest.TestCase):
             self.assertEqual(result.code, 0, result.text)
             self.assertIn("~1 info", result.commit_message)
             doc = read_json(repo / "data" / "courses" / "dnb-T_CRS_MNG0000005116.json")
-            self.assertEqual((doc["summary"], doc["generatedAt"]), ("바뀐 요약", SECOND_RUN_AT))
+            self.assertEqual((doc["summary"], doc["generatedAt"]), ("바뀐 요약", SECOND_RUN_UTC))
 
 
 class AbortTest(unittest.TestCase):

@@ -21,7 +21,7 @@ import sys
 import time
 import urllib.parse
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable, Dict, List, Mapping, Optional, Sequence, TextIO, Tuple
 
@@ -273,7 +273,8 @@ def collect_once(
 ) -> Tuple[str, str]:
     """Runs and writes; returns (commit message, notice). Raises on abort."""
     started = monotonic()
-    generated_at = now().astimezone(KST).replace(microsecond=0).isoformat()
+    # UTC with "Z": the app template envelope parser rejects offsets like +09:00.
+    generated_at = now().astimezone(timezone.utc).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
     previous = load_previous(options.repo)
     state, state_warning = load_state(options.repo / STATE_PATH)
     for warning in (previous.warning, state_warning):

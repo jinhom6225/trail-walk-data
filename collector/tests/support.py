@@ -26,6 +26,9 @@ NO_KEY_FILE = Path("/nonexistent/trail-walk-data/service_key")
 GPX_NAMES = ("dnb_gpx_cycle.gpx", "dnb_gpx_dmz.gpx", "dnb_gpx_file2025.gpx", "dnb_gpx_short.gpx")
 FIRST_RUN_AT = "2026-11-07T04:10:00+09:00"
 SECOND_RUN_AT = "2026-11-08T04:10:00+09:00"
+# The app template envelope parser accepts UTC "Z" timestamps only.
+FIRST_RUN_UTC = "2026-11-06T19:10:00Z"
+SECOND_RUN_UTC = "2026-11-07T19:10:00Z"
 
 Outcome = Union[RawResponse, BaseException]
 
