@@ -1,0 +1,14 @@
+{
+  "name": "dnb_route_list",
+  "url": "https://apis.data.go.kr/B551011/Durunubi/routeList",
+  "params": {
+    "MobileOS": "AND",
+    "MobileApp": "trailwalkguide",
+    "_type": "json",
+    "numOfRows": "50",
+    "pageNo": "1"
+  },
+  "status": 200,
+  "content_type": "application/json",
+  "bytes": 5556
+}

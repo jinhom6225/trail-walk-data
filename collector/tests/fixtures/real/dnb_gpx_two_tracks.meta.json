@@ -1,0 +1,8 @@
+{
+  "name": "dnb_gpx_two_tracks",
+  "course": "해파랑길 18코스 (T_CRS_MNG0000004195)",
+  "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/file/2026/01/eaffbe89b9874639b8cef1b5474df00b.gpx",
+  "fetched": "2026-11-06 (Phase 1 real run check)",
+  "note": "two <trk> elements, each the whole course start to end (833 and 839 points); joining them doubled lineKm",
+  "bytes": 192628
+}

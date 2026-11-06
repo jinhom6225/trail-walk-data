@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" creator="Korea Tourism Organization" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <trk>
+        <name>GPX</name>
+        <trkseg>
+            <trkpt lat="37.83746894448996" lon="126.73499202355742">
+                <ele>10.086</ele>
+            </trkpt>
+            <trkpt lat="37.83753750845789" lon="126.73494567163289">
+                <ele>9.535</ele>
+            </trkpt>
+            <trkpt lat="37.83772727474571" lon="126.7348082922399">
+                <ele>7.674</ele>
+            </trkpt>
+            <trkpt lat="37.83793556503952" lon="126.73467082902789">
+                <ele>6.407</ele>
+            </trkpt>
+            <trkpt lat="37.83814067021011" lon="126.7345181107521">
+                <ele>5.571</ele>
+            </trkpt>
+            <trkpt lat="37.83836865797641" lon="126.73435030505063">
+                <ele>6.127</ele>
+            </trkpt>
+            <trkpt lat="37.83860586583616" lon="126.73416741192341">
+                <ele>6.981</ele>
+            </trkpt>
+            <trkpt lat="37.838859166949995" lon="126.73399943858385">
+                <ele>8.495</ele>
+            </trkpt>
+            <trkpt lat="37.83901917748154" lon="126.73391377553342">
+                <ele>9.38</ele>
+            </trkpt>
+            <trkpt lat="37.839177930727615" lon="126.73384454101324">
+                <ele>9.881</ele>
+            </trkpt>
+            <trkpt lat="37.83931321464479" lon="126.73381160013378">
+                <ele>10.249</ele>
+            </trkpt>
+            <trkpt lat="37.83946752548218" lon="126.73380028456448">
+                <ele>10.821</ele>
+            </trkpt>
+            <trkpt lat="37.83963197842241" lon="126.7338198143989">
+                <ele>11.934</ele>
+            </trkpt>
+            <trkpt lat="37.83980238251388" lon="126.7338

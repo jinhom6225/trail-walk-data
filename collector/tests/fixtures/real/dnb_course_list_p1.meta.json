@@ -1,0 +1,14 @@
+{
+  "name": "dnb_course_list_p1",
+  "url": "https://apis.data.go.kr/B551011/Durunubi/courseList",
+  "params": {
+    "MobileOS": "AND",
+    "MobileApp": "trailwalkguide",
+    "_type": "json",
+    "numOfRows": "100",
+    "pageNo": "1"
+  },
+  "status": 200,
+  "content_type": "application/json",
+  "bytes": 191989
+}
