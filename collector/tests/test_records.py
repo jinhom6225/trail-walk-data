@@ -9,6 +9,11 @@ def course_named(name):
 
 
 class ParseCourseTest(unittest.TestCase):
+    def test_branch_and_detour_courses_have_no_seq(self):
+        for name in ("서해랑길 64-3(지선3코스)", "DMZ 평화의 길 26-1코스(우회로)", "DMZ 평화의 길 4-1코스(지선코스)"):
+            with self.subTest(name=name):
+                self.assertIsNone(parse_course(course_named(name)).seq)
+
     def test_first_real_course(self):
         course = parse_course(real_courses()[0])
         self.assertEqual(course.id, "dnb-T_CRS_MNG0000005116")
@@ -72,7 +77,10 @@ class ParseCourseTest(unittest.TestCase):
         self.assertEqual(sum(c.loop for c in courses), 2)
         self.assertEqual(sum(c.reservation for c in courses), 4)
         self.assertTrue(all(c.level in (1, 2, 3) for c in courses))
-        self.assertTrue(all(isinstance(c.seq, int) for c in courses))
+        branches = [c for c in courses if "-" in c.name.split("(")[0]]
+        self.assertEqual(len(branches), 8)
+        self.assertTrue(all(c.seq is None for c in branches))
+        self.assertTrue(all(isinstance(c.seq, int) for c in courses if c not in branches))
 
 
 class ParseRouteTest(unittest.TestCase):

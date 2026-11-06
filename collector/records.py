@@ -19,6 +19,9 @@ SOURCE = "dnb"
 _SAFE_ID = re.compile(r"^[A-Za-z0-9_]{1,64}$")
 _MODIFIED = re.compile(r"^(\d{4})(\d{2})(\d{2})\d{6}$")
 _SEQ = re.compile(r"(\d+)\s*코스")
+# Branch or detour courses ("64-3(지선3코스)", "26-1코스(우회로)") share the main
+# course number, so they get no seq.
+_BRANCH = re.compile(r"\d+-\d+")
 _GPX_FILE_PATH = re.compile(r"^/[A-Za-z0-9_/.\-]+\.gpx$")
 LOOP_VALUE = "순환형"
 RESERVATION_MARK = "예약노선"
@@ -121,7 +124,7 @@ def parse_course(raw: Any) -> Course:
     match = _MODIFIED.match(modified)
     if not match:
         raise RecordInvalid("bad modifiedtime")
-    seq = _SEQ.search(name)
+    seq = None if _BRANCH.search(name) else _SEQ.search(name)
     level = str(raw.get("crsLevel") or "").strip()
     region = clean_text(raw.get("sigun"))
     return Course(
