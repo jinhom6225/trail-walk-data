@@ -1,0 +1,17 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Never keep a key file in this repository.
+*.key
+.env
+env/
+
+# Raw GPX files are never committed (state/gpx.json tracks them instead).
+raw/
+*.gpx
+!collector/tests/fixtures/**/*.gpx
+
+# Local measurement and scratch output.
+/.local/
+/out/
