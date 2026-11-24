@@ -10,9 +10,9 @@
   "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/file/2026/01/29872a789ac146dda632e136a3f3d228.gpx"
  },
  "dnb-T_CRS_MNG0000004192": {
-  "modified": "20260907075054",
-  "sha256": "23a5971de362697ef311c643e66da7164f1b4ca136ef3035df9ec0227e81bab7",
-  "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/course/summap/T_CRS_MNG0000004192.gpx"
+  "modified": "20261123122542",
+  "sha256": "e7895ae469b79a15636b7b5465016b79e7cd5c55190d8d2129d981ccd2e92bb2",
+  "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/file/2026/11/e08ac53ee6944db7ab46d17049f34aff.gpx"
  },
  "dnb-T_CRS_MNG0000004193": {
   "modified": "20260730120816",
@@ -524,6 +524,11 @@
   "sha256": "664e7e2b544d0aa522d6184107ddac1a487e6f956a9340cb1dbe2301d5995fa0",
   "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/file/2026/02/0ce8852f67ad4847a14faa68629fb136.gpx"
  },
+ "dnb-T_CRS_MNG0000005312": {
+  "modified": "20261123042633",
+  "sha256": "79f135be5c06c81f119729841eb8644221857ca0333dde0b43207d3525370222",
+  "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/course/summap/T_CRS_MNG0000005312.gpx"
+ },
  "dnb-T_CRS_MNG0000005316": {
   "modified": "20260915081055",
   "sha256": "a0449aa4fc1039f94c7ac9aba7747cb1a6a93315c6b03cab1376da01207a874d",
@@ -558,11 +563,6 @@
   "modified": "20251204121600",
   "sha256": "1e1616937a8e218f2e73c90a80e56788715953af6aedb302ccc896ff6939dcb1",
   "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/file/2025/12/976edee965874be1a41da61a50b2aa7e.gpx"
- },
- "dnb-T_CRS_MNG0000005326": {
-  "modified": "20251124114825",
-  "sha256": "0117dcb9285f8452042b74fa5ad4b096ccc6e84001f992254634ea90ef4f5a61",
-  "url": "https://www.durunubi.kr/editImgUp.do?filePath=/data/koreamobility/course/summap/T_CRS_MNG0000005326.gpx"
  },
  "dnb-T_CRS_MNG0000005330": {
   "modified": "20261028045509",
